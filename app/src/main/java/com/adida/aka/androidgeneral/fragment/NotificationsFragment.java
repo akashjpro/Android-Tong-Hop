@@ -24,15 +24,11 @@ import static android.content.Context.NOTIFICATION_SERVICE;
  * A simple {@link Fragment} subclass.
  */
 public class NotificationsFragment extends android.app.Fragment {
-    Button btnCreate, btnClose;
-    int notificationId;
+    private Button mBtnCreate, mBtnClose;
+    private int mNotificationId;
     private View mView;
 
     private int mVersion = 0;
-
-    public NotificationsFragment() {
-        // Required empty public constructor
-    }
 
 
     @Override
@@ -40,9 +36,9 @@ public class NotificationsFragment extends android.app.Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_notifications, container, false);
-        btnCreate = (Button) mView.findViewById(R.id.buttonCreateNotification);
-        btnClose  = (Button) mView.findViewById(R.id.buttonCloseNotificattion);
-        btnCreate.setOnClickListener(new View.OnClickListener() {
+        mBtnCreate = (Button) mView.findViewById(R.id.buttonCreateNotification);
+        mBtnClose = (Button) mView.findViewById(R.id.buttonCloseNotificattion);
+        mBtnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 createNotification();
@@ -50,7 +46,7 @@ public class NotificationsFragment extends android.app.Fragment {
 
         });
 
-        btnClose.setOnClickListener(new View.OnClickListener() {
+        mBtnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 closeNotification();
@@ -62,7 +58,7 @@ public class NotificationsFragment extends android.app.Fragment {
     private void closeNotification() {
         NotificationManager mNotifyMgr =
                 (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
-        mNotifyMgr.cancel(notificationId);
+        mNotifyMgr.cancel(mNotificationId);
     }
 
     private void createNotification() {
@@ -90,18 +86,13 @@ public class NotificationsFragment extends android.app.Fragment {
         Uri uri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         mBuilder.setSound(uri);
 
-//        Uri newSound= Uri.parse("android.resource://"
-//                + getActivity().getPackageName() + "/" + R.raw.adidaphat);
-//        mBuilder.setSound(newSound);
-
-
-        notificationId = 113;
+        mNotificationId = 113;
 
         // Gets an instance of the NotificationManager service
         NotificationManager mNotifyMgr =
                 (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
         // Builds the notification and issues it.
-        mNotifyMgr.notify(notificationId, mBuilder.build());
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
 
 
     }

@@ -23,9 +23,6 @@ public class DialogFragment extends Fragment implements View.OnClickListener {
 
     EditText edtUsername, edtPass, edtEmail;
     Button btnDangKy, btnHuyDangKy;
-    public DialogFragment() {
-        // Required empty public constructor
-    }
 
 
     @Override
@@ -58,17 +55,20 @@ public class DialogFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    /**
+     * Example input dialog
+     */
     private void inputDialog() {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.dialog_custom);
-        dialog.setCanceledOnTouchOutside(false);// hủy khi chạm ở bên ngoài;
+        dialog.setCanceledOnTouchOutside(false);
 
-        edtUsername = (EditText) dialog.findViewById(R.id.editTextUsername);
-        edtEmail    = (EditText) dialog.findViewById(R.id.editTextEmail);
-        edtPass     = (EditText) dialog.findViewById(R.id.editTextPass);
+        edtUsername =  dialog.findViewById(R.id.editTextUsername);
+        edtEmail    =  dialog.findViewById(R.id.editTextEmail);
+        edtPass     =  dialog.findViewById(R.id.editTextPass);
 
-        btnDangKy      = (Button) dialog.findViewById(R.id.buttonDangKy);
-        btnHuyDangKy   = (Button) dialog.findViewById(R.id.buttonHuy);
+        btnDangKy      = dialog.findViewById(R.id.buttonDangKy);
+        btnHuyDangKy   =  dialog.findViewById(R.id.buttonHuy);
 
         btnDangKy.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,12 +85,15 @@ public class DialogFragment extends Fragment implements View.OnClickListener {
         btnHuyDangKy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialog.dismiss();//tắt hộp thoại
+                dialog.dismiss();
             }
         });
         dialog.show();
     }
 
+    /**
+     * Example confirm dialog
+     */
     private void confirmDialog() {
         final AlertDialog dialog = new AlertDialog.Builder(getActivity()).create();
         dialog.setTitle("Are you sure delete!");
@@ -115,10 +118,13 @@ public class DialogFragment extends Fragment implements View.OnClickListener {
         dialog.show();
     }
 
+    /**
+     * Example info dialog
+     */
     private void infoDialog() {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.dialog_info);
-        dialog.setCanceledOnTouchOutside(false);// hủy khi chạm ở bên ngoài;
+        dialog.setCanceledOnTouchOutside(false);
 
         Button btnClose = (Button) dialog.findViewById(R.id.btn_close);
         btnClose.setOnClickListener(new View.OnClickListener() {
@@ -130,6 +136,9 @@ public class DialogFragment extends Fragment implements View.OnClickListener {
         dialog.show();
     }
 
+    /**
+     * Example waiting dialog
+     */
     private void waitingDialog() {
         ProgressDialog dialog = new ProgressDialog(getActivity());
         dialog.setMessage("Loading...");

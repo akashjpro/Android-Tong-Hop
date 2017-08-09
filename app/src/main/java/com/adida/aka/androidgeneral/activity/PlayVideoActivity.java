@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.adida.aka.androidgeneral.R;
+import com.adida.aka.androidgeneral.widget.Constans;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
@@ -22,54 +23,60 @@ import com.google.android.youtube.player.YouTubePlayerView;
 import java.util.Formatter;
 import java.util.Locale;
 
+import static com.adida.aka.androidgeneral.widget.Constans.API_KEY;
+
 public class PlayVideoActivity extends YouTubeBaseActivity implements
         YouTubePlayer.OnInitializedListener,
         View.OnClickListener {
+    public static final int REQUEST_VIDEO = 111;
 
-    public static String API_KEY =  "AIzaSyCax_paqrKloMoL2aYAZTcnpCnhdCWr5_E";
-    private String id = "";
-    private YouTubePlayerView youTubePlayerView;
-    int REQUEST_VIDEO = 123;
+    private boolean isDragging; // check user drag
+    private boolean isEndTouch;
+    private boolean isExit = false;
 
-    YouTubePlayer mYouTubePlayer;
-    ImageButton btnPlayPause, imgbFullScreen;
-    SeekBar seekBar;
-    TextView txtStartTime, txtEndTime;
-    StringBuilder mFormatBuilder;
-    Formatter mFormatter;
-    private boolean mDragging;
-    boolean ktEndTouch;
-    boolean exit = false;
+    private String mId = "";
+    private YouTubePlayerView mYouTubePlayerView;
+
+    private YouTubePlayer mYouTubePlayer;
+    private ImageButton mBtnPlayPause, mImgbFullScreen;
+    private SeekBar mSeekBar;
+    private TextView mTxtStartTime, mTxtEndTime;
+    private StringBuilder mFormatBuilder;
+    private Formatter mFormatter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_video);
+
+        initView();
+        addListeners();
+
+    }
+
+    private void initView() {
         mFormatBuilder = new StringBuilder();
         mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
 
-        addControls();
+        mYouTubePlayerView =  findViewById(R.id.youtubePlayerView);
+        mBtnPlayPause      =  findViewById(R.id.imgbtnPlayPause);
+        mImgbFullScreen    =  findViewById(R.id.fullSreen);
+        mSeekBar           =  findViewById(R.id.video_seekbar);
+        mTxtStartTime      =  findViewById(R.id.thoiGianBT);
+        mTxtEndTime        =  findViewById(R.id.thoiGianKT);
+
         Intent intent = getIntent();
-        id = intent.getStringExtra("IDVIDEO");
-        youTubePlayerView.initialize(API_KEY, PlayVideoActivity.this);
-        handleEvent();
+        mId = intent.getStringExtra(Constans.EXTRA_ID_VIDEO);
+        mYouTubePlayerView.initialize(API_KEY, PlayVideoActivity.this);
     }
 
-    private void addControls() {
-        youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtubePlayerView);
-        btnPlayPause      = (ImageButton) findViewById(R.id.imgbtnPlayPause);
-        imgbFullScreen    = (ImageButton) findViewById(R.id.fullSreen);
-        seekBar           = (SeekBar) findViewById(R.id.video_seekbar);
-        txtStartTime      = (TextView) findViewById(R.id.thoiGianBT);
-        txtEndTime        = (TextView) findViewById(R.id.thoiGianKT);
-    }
+    private void addListeners() {
 
-    private void handleEvent() {
+        mBtnPlayPause.setOnClickListener(this);
+        mSeekBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
 
-        btnPlayPause.setOnClickListener(this);
-        seekBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
-
-        imgbFullScreen.setOnClickListener(new View.OnClickListener() {
+        mImgbFullScreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final int orientation = PlayVideoActivity.this.getResources().getConfiguration().orientation;
@@ -87,11 +94,10 @@ public class PlayVideoActivity extends YouTubeBaseActivity implements
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
         mYouTubePlayer = youTubePlayer;
-        mYouTubePlayer.cueVideo(id);
+        mYouTubePlayer.cueVideo(mId);
         mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
         mYouTubePlayer.setPlayerStateChangeListener(stateChangeListener);
         mYouTubePlayer.setPlaybackEventListener(playbackEventListener);
-        //youTubePlayer.setOnFullscreenListener(this);
 
     }
 
@@ -108,7 +114,7 @@ public class PlayVideoActivity extends YouTubeBaseActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode==REQUEST_VIDEO){
-            //youTubePlayerView.initialize(MainActivity.API_KEY, this);
+            mYouTubePlayerView.initialize(API_KEY, this);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -119,24 +125,12 @@ public class PlayVideoActivity extends YouTubeBaseActivity implements
         super.onConfigurationChanged(newConfig);
 
     }
-//
-//    @SuppressLint("InlinedApi")
-//    private static final int PORTRAIT_ORIENTATION = Build.VERSION.SDK_INT < 9
-//            ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-//            : ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT;
-//
-//    @SuppressLint("InlinedApi")
-//    private static final int LANDSCAPE_ORIENTATION = Build.VERSION.SDK_INT < 9
-//            ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-//            : ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
-
-
 
 
     YouTubePlayer.PlaybackEventListener playbackEventListener = new YouTubePlayer.PlaybackEventListener() {
         @Override
         public void onPlaying() {
-            ktEndTouch = false;
+            isEndTouch = false;
             mShowProgress.run();
         }
 
@@ -150,11 +144,11 @@ public class PlayVideoActivity extends YouTubeBaseActivity implements
 
         @Override
         public void onBuffering(boolean isBuffering) {
-            ViewGroup ytView = (ViewGroup)youTubePlayerView.getRootView();
+            ViewGroup ytView = (ViewGroup) mYouTubePlayerView.getRootView();
             ProgressBar progressBar;
             progressBar = findProgressBar(ytView);
             try {
-                // As of 2016-02-16, the ProgressBar is at position 0 -> 3 -> 2 in the view tree of the Youtube Player Fragment
+                //The ProgressBar is at position 0 -> 3 -> 2 in the view tree of the Youtube Player Fragment
                 ViewGroup child1 = (ViewGroup)ytView.getChildAt(0);
                 ViewGroup child2 = (ViewGroup)child1.getChildAt(3);
                 progressBar = (ProgressBar)child2.getChildAt(2);
@@ -189,34 +183,6 @@ public class PlayVideoActivity extends YouTubeBaseActivity implements
             return null;
         }
     };
-    private SeekBar findSeekBar(View view) {
-        if (view instanceof SeekBar) {
-            return (SeekBar) view;
-        } else if (view instanceof ViewGroup) {
-            ViewGroup viewGroup = (ViewGroup)view;
-            for (int i = 0; i < viewGroup.getChildCount(); i++) {
-                SeekBar res = findSeekBar(viewGroup.getChildAt(i));
-                if (res != null) return res;
-            }
-        }
-        return null;
-    }
-    private void visibleChild(ViewGroup viewGroup) {
-//        viewGroup.setVisibility(View.VISIBLE);
-//        Toast.makeText(this, "vo 1", Toast.LENGTH_SHORT).show();
-//        if(viewGroup.getChildCount()>0) {
-//            for (int i = 1; i < 3; i++) {
-//                Toast.makeText(this, "vo 2", Toast.LENGTH_SHORT).show();
-//                viewGroup.getChildAt(i).setVisibility(View.INVISIBLE);
-//            }
-//        }
-        ViewGroup viewGroup1 = (ViewGroup) viewGroup.getChildAt(3);
-        viewGroup1.getChildAt(2).setVisibility(View.INVISIBLE);
-
-    }
-
-
-
 
 
     YouTubePlayer.PlayerStateChangeListener stateChangeListener = new YouTubePlayer.PlayerStateChangeListener() {
@@ -227,30 +193,21 @@ public class PlayVideoActivity extends YouTubeBaseActivity implements
         @Override
         public void onLoaded(String s) {
             mYouTubePlayer.play();
-            // mShowProgress.run();
-
-//            ViewGroup ytView = (ViewGroup)youTubePlayerView.getRootView();
-//            visibleChild(ytView);
-//            SeekBar seekBar = findSeekBar(ytView);
-//            seekBar.setVisibility(View.VISIBLE);
-
         }
 
         @Override
         public void onAdStarted() {
-            //Toast.makeText(PlayVideo.this, "onAdStarted", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onVideoStarted() {
-            //Toast.makeText(PlayVideo.this, "onVideoStarted", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onVideoEnded() {
-            btnPlayPause.setImageResource(R.drawable.ic_play);
+            mBtnPlayPause.setImageResource(R.drawable.ic_play);
             mYouTubePlayer.pause();
-            ktEndTouch = true;
+            isEndTouch = true;
         }
 
         @Override
@@ -261,16 +218,16 @@ public class PlayVideoActivity extends YouTubeBaseActivity implements
 
     @Override
     public void onClick(View v) {
-        if(ktEndTouch){
+        if(isEndTouch){
             mYouTubePlayer.play();
-            btnPlayPause.setImageResource(R.drawable.ic_pause);
+            mBtnPlayPause.setImageResource(R.drawable.ic_pause);
         }else {
             if(mYouTubePlayer != null & !mYouTubePlayer.isPlaying()){
                 mYouTubePlayer.play();
-                btnPlayPause.setImageResource(R.drawable.ic_pause);
+                mBtnPlayPause.setImageResource(R.drawable.ic_pause);
             }else {
                 mYouTubePlayer.pause();
-                btnPlayPause.setImageResource(R.drawable.ic_play);
+                mBtnPlayPause.setImageResource(R.drawable.ic_play);
             }
         }
 
@@ -287,41 +244,36 @@ public class PlayVideoActivity extends YouTubeBaseActivity implements
             long duration = mYouTubePlayer.getDurationMillis();
             long newposition = (duration * progress) / 1000L;
             mYouTubePlayer.seekToMillis( (int) newposition);
-            if (txtStartTime != null)
-                txtStartTime.setText(stringForTime( (int) newposition));
+            if (mTxtStartTime != null)
+                mTxtStartTime.setText(stringForTime( (int) newposition));
         }
 
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
-            mDragging = true;
-            //Toast.makeText(PlayVideo.this, "onStartTrackingTouch", Toast.LENGTH_SHORT).show();
-
+            isDragging = true;
         }
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
-            mDragging = false;
+            isDragging = false;
             setProgress();
             mShowProgress.run();
-            //Toast.makeText(PlayVideo.this, "onStopTrackingTouch", Toast.LENGTH_SHORT).show();
         }
     };
 
     @Override
     public void onBackPressed() {
-        exit = true;
+        isExit = true;
         mYouTubePlayer.pause();
-        //Toast.makeText(this, exit?"Exit = true":"Exit = false", Toast.LENGTH_SHORT).show();
         finish();
         super.onBackPressed();
     }
 
-    private void  timeSong(){
-        txtEndTime.setText(stringForTime(mYouTubePlayer.getDurationMillis()));
-        seekBar.setMax(1000);
-    }
-
-
+    /**
+     * Format time for song
+     * @param timeMs
+     * @return
+     */
     private String stringForTime(int timeMs) {
         int totalSeconds = timeMs / 1000;
 
@@ -337,72 +289,47 @@ public class PlayVideoActivity extends YouTubeBaseActivity implements
         }
     }
 
+
+    /**
+     * Set time progress
+     * @return
+     */
     private int setProgress() {
-        if (mYouTubePlayer == null || mDragging) {
+        if (mYouTubePlayer == null || isDragging) {
             return 0;
         }
 
         int position = mYouTubePlayer.getCurrentTimeMillis();
         int duration = mYouTubePlayer.getDurationMillis();
-        if (seekBar != null) {
+        if (mSeekBar != null) {
             if (duration > 0) {
                 // use long to avoid overflow
                 long pos = 1000L * position / duration;
-                seekBar.setProgress((int) pos);
-                //Toast.makeText(PlayVideo.this, "setProgress111111", Toast.LENGTH_SHORT).show();
+                mSeekBar.setProgress((int) pos);
             }
         }
 
-        if (txtEndTime != null)
-            txtEndTime.setText(stringForTime(duration));
-        if (txtStartTime != null)
-            txtStartTime.setText(stringForTime(position));
+        if (mTxtEndTime != null)
+            mTxtEndTime.setText(stringForTime(duration));
+        if (mTxtStartTime != null)
+            mTxtStartTime.setText(stringForTime(position));
 
         return position;
     }
 
 
-    private void upDateCurrentTime(){
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                int currentTime = (mYouTubePlayer.getCurrentTimeMillis()*1000)/mYouTubePlayer.getDurationMillis();
-                seekBar.setProgress(currentTime);
-                Toast.makeText(PlayVideoActivity.this, "" + currentTime+ "-" + 1000, Toast.LENGTH_SHORT).show();
-                handler.postDelayed(this, 1000);
-
-            }
-        }, 0);
-    }
-
     private final Runnable mShowProgress = new Runnable() {
         @Override
         public void run() {
-            if(!exit){
+            if(!isExit){
                 int pos = setProgress();
                 final Handler handler = new Handler();
-                //Toast.makeText(PlayVideo.this, mYouTubePlayer.isPlaying()?"OK":"NO", Toast.LENGTH_SHORT).show();
-                if (!mDragging && mYouTubePlayer.isPlaying()) {
+                if (!isDragging && mYouTubePlayer.isPlaying()) {
                     handler.postDelayed(mShowProgress, 1000 - (pos % 1000));
                 }
             }
         }
     };
 
-    private void loopRunnable(final Runnable runnable){
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(PlayVideoActivity.this, "DDDĐ", Toast.LENGTH_SHORT).show();
-                runnable.run();
-                handler.postDelayed(this, 100);
-                if (mYouTubePlayer.isPlaying()){
-                    handler.removeCallbacks(this);
-                }
-            }
-        }, 0);
-    }
 
 }

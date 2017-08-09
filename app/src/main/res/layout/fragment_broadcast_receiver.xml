@@ -32,7 +32,6 @@
         android:text="Listener Network" />
 
     <Button
-        android:visibility="gone"
         android:layout_marginTop="15dp"
         android:textAllCaps="false"
         android:id="@+id/btn_location"

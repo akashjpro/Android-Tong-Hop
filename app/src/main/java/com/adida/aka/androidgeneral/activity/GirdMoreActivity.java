@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.adida.aka.androidgeneral.R;
 
-public class GirdMore extends AppCompatActivity {
+public class GirdMoreActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

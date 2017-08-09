@@ -5,11 +5,11 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.adida.aka.androidgeneral.R;
 
-public class Relative extends AppCompatActivity {
+public class TableActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_relative);
+        setContentView(R.layout.activity_table);
     }
 }

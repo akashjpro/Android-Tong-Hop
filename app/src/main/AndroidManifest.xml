@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -24,11 +25,11 @@
         <activity android:name=".activity.NewDetailActivity" />
         <activity android:name=".activity.UpdateActivity" />
         <activity android:name=".activity.LinearActivity" />
-        <activity android:name=".activity.Relative" />
-        <activity android:name=".activity.Table" />
-        <activity android:name=".activity.Gird" />
+        <activity android:name=".activity.RelativeActivity" />
+        <activity android:name=".activity.TableActivity" />
+        <activity android:name=".activity.GirdActivity" />
         <activity android:name=".activity.FrameActivity" />
-        <activity android:name=".activity.GirdMore" />
+        <activity android:name=".activity.GirdMoreActivity" />
         <activity android:name=".activity.ControlsActivity" />
         <activity android:name=".activity.PlayVideoActivity"
             android:configChanges="orientation|screenSize"></activity>

@@ -14,12 +14,6 @@ import com.adida.aka.androidgeneral.R;
  */
 public class ControlsFragment extends Fragment{
 
-
-    public ControlsFragment() {
-        // Required empty public constructor
-    }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

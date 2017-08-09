@@ -1,6 +1,7 @@
 package com.adida.aka.androidgeneral.fragment;
 
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,10 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
-import com.adida.aka.androidgeneral.adapter.VideoAdapter;
 import com.adida.aka.androidgeneral.R;
+import com.adida.aka.androidgeneral.adapter.VideoAdapter;
 import com.adida.aka.androidgeneral.model.Video;
+import com.adida.aka.androidgeneral.widget.Utilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,25 +30,22 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.adida.aka.androidgeneral.widget.Constans.API_KEY;
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class LoadImageFragment extends android.app.Fragment {
 
-    public static String API_KEY =  "AIzaSyCax_paqrKloMoL2aYAZTcnpCnhdCWr5_E";
-    String PLAYLIST_ID = "PLC7VoaA2DTCLgAH396ER9Oc2POXTAjdAn";
-    String LINK = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId="+ PLAYLIST_ID +"&key="+ API_KEY +"&maxResults=50";
+    private static final String PLAYLIST_ID = "PLC7VoaA2DTCLgAH396ER9Oc2POXTAjdAn";
+    private static final String LINK = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId="
+            + PLAYLIST_ID +"&key="+ API_KEY +"&maxResults=50";
 
-    RecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     List<Video>  mLisrVideo;
     VideoAdapter mVideoAdapter;
     ProgressBar  progressBar;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-
-    public LoadImageFragment() {
-        // Required empty public constructor
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,20 +54,30 @@ public class LoadImageFragment extends android.app.Fragment {
         View view = inflater.inflate(R.layout.fragment_load_image, container, false);
         mRecyclerView = view.findViewById(R.id.recycler_video);
         mLisrVideo = new ArrayList<>();
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
         mVideoAdapter = new VideoAdapter(getActivity(), mLisrVideo);
         progressBar   = view.findViewById(R.id.prb_load);
         mRecyclerView.setAdapter(mVideoAdapter);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        mSwipeRefreshLayout =  view.findViewById(R.id.swipeRefreshLayout);
 
-        getData();
+        loadData(getActivity());
         refresh();
 
         return view;
     }
 
-    private void getData() {
+    /**
+     * Load data from internet
+     * @param context
+     */
+    private void loadData(Activity context) {
+        if (!Utilities.checkNetwok(context)){
+            Toast.makeText(context, "Network unavailable, please check and try again",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -76,13 +86,16 @@ public class LoadImageFragment extends android.app.Fragment {
         });
     }
 
+    /**
+     * Refresh data
+     */
     private void refresh() {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mLisrVideo.clear();
                 mVideoAdapter.notifyDataSetChanged();
-                getData();
+                loadData(getActivity());
                 //Stop progress indicator when update finish
                 mSwipeRefreshLayout.setRefreshing(false);
             }
@@ -90,6 +103,9 @@ public class LoadImageFragment extends android.app.Fragment {
     }
 
 
+    /**
+     * Get data from server youtube with ascynctask
+     */
     private  class GET_JSON_YOUTUBE extends AsyncTask<String, String, String> {
 
         @Override
@@ -105,7 +121,6 @@ public class LoadImageFragment extends android.app.Fragment {
 
         @Override
         protected void onPostExecute(String s) {
-            //Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
             super.onPostExecute(s);
             try {
                 JSONObject object = new JSONObject(s);
@@ -114,7 +129,6 @@ public class LoadImageFragment extends android.app.Fragment {
                 String title        = "";
                 String videoId      = "";
                 String channelTitle = "";
-//                Toast.makeText(getActivity(), "size: "+jsonItems.length() , Toast.LENGTH_SHORT).show();
                 for (int i=0; i<jsonItems.length(); i++){
                     JSONObject objectItem = jsonItems.getJSONObject(i);
                     JSONObject jsonSnippet = objectItem.getJSONObject("snippet");
@@ -123,7 +137,6 @@ public class LoadImageFragment extends android.app.Fragment {
                     //Get url
                     JSONObject objectThumbnails = jsonSnippet.getJSONObject("thumbnails");
                     JSONObject objectDefault = null;
-//                    Toast.makeText(getActivity(), "Size: "+ objectThumbnails.length(), Toast.LENGTH_SHORT ).show();
                     int size = objectThumbnails.length();
                     switch (size){
                         case 1:
@@ -155,9 +168,6 @@ public class LoadImageFragment extends android.app.Fragment {
                     mVideoAdapter.notifyDataSetChanged();
                     progressBar.setVisibility(View.GONE);
                 }
-
-
-
 
             } catch (JSONException e) {
                 e.printStackTrace();

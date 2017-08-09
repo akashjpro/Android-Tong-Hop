@@ -18,13 +18,8 @@ import com.adida.aka.androidgeneral.R;
  */
 public class VideoFragment extends android.app.Fragment {
 
-    Button mBtnPlay;
-    VideoView videoViewMP4;
-
-    public VideoFragment() {
-        // Required empty public constructor
-    }
-
+    private Button mBtnPlay;
+    private VideoView mVideoView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -32,15 +27,16 @@ public class VideoFragment extends android.app.Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_video, container, false);
         mBtnPlay = view.findViewById(R.id.button_play);
-        videoViewMP4 =  view.findViewById(R.id.videoViewMp4);
+        mVideoView =  view.findViewById(R.id.videoViewMp4);
         mBtnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                videoViewMP4.setVideoURI(Uri.parse("android.resource://" + getActivity().getPackageName() + "/" + R.raw.huvantruonglao));
-                videoViewMP4.start();
+                mVideoView.setVideoURI(Uri.parse("android.resource://"
+                        + getActivity().getPackageName() + "/" + R.raw.huvantruonglao));
+                mVideoView.start();
                 MediaController mediaController = new MediaController(getActivity());
-                mediaController.setMediaPlayer(videoViewMP4);
-                videoViewMP4.setMediaController(mediaController);
+                mediaController.setMediaPlayer(mVideoView);
+                mVideoView.setMediaController(mediaController);
             }
         });
         return view;

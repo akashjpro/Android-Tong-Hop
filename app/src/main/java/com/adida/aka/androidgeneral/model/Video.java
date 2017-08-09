@@ -5,50 +5,50 @@ package com.adida.aka.androidgeneral.model;
  */
 
 public class Video {
-    private String videoID;
-    private String title;
-    private String channelTitle;
-    private String hinh;
+    private String mIdVideo;
+    private String mTitle;
+    private String mChannelTitle;
+    private String mImage;
 
     public Video() {
     }
 
-    public Video(String videoID, String title, String channelTitle, String hinh) {
-        this.videoID = videoID;
-        this.title = title;
-        this.channelTitle = channelTitle;
-        this.hinh = hinh;
+    public Video(String mIdVideo, String mTitle, String mChannelTitle, String mImage) {
+        this.mIdVideo = mIdVideo;
+        this.mTitle = mTitle;
+        this.mChannelTitle = mChannelTitle;
+        this.mImage = mImage;
     }
 
-    public String getVideoID() {
-        return videoID;
+    public String getmIdVideo() {
+        return mIdVideo;
     }
 
-    public void setVideoID(String videoID) {
-        this.videoID = videoID;
+    public void setmIdVideo(String mIdVideo) {
+        this.mIdVideo = mIdVideo;
     }
 
-    public String getTitle() {
-        return title;
+    public String getmTitle() {
+        return mTitle;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setmTitle(String mTitle) {
+        this.mTitle = mTitle;
     }
 
-    public String getChannelTitle() {
-        return channelTitle;
+    public String getmChannelTitle() {
+        return mChannelTitle;
     }
 
-    public void setChannelTitle(String channelTitle) {
-        this.channelTitle = channelTitle;
+    public void setmChannelTitle(String mChannelTitle) {
+        this.mChannelTitle = mChannelTitle;
     }
 
-    public String getHinh() {
-        return hinh;
+    public String getmImage() {
+        return mImage;
     }
 
-    public void setHinh(String hinh) {
-        this.hinh = hinh;
+    public void setmImage(String mImage) {
+        this.mImage = mImage;
     }
 }

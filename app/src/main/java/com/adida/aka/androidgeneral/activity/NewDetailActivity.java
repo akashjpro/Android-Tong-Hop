@@ -14,33 +14,33 @@ import android.widget.ProgressBar;
 import com.adida.aka.androidgeneral.R;
 
 public class NewDetailActivity extends AppCompatActivity {
-    private WebView webViewLink;
+    private WebView mWebViewLink;
     private ProgressBar mProgressBar;
-    boolean loadingFinished = true;
-    boolean redirect = false;
+    boolean isFinished = true;
+    boolean isRedirect = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_detail);
-        webViewLink = (WebView) findViewById(R.id.webview_link);
+        mWebViewLink = (WebView) findViewById(R.id.webview_link);
         mProgressBar = (ProgressBar) findViewById(R.id.prb_load);
 
         Intent intent = getIntent();
         final String link = intent.getStringExtra("link");
 
-        webViewLink.loadUrl(link);
-        WebSettings webSettings = webViewLink.getSettings();
+        mWebViewLink.loadUrl(link);
+        WebSettings webSettings = mWebViewLink.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        webViewLink.setWebViewClient(new WebViewClient(){
+        mWebViewLink.setWebViewClient(new WebViewClient(){
             @Override
             public boolean shouldOverrideUrlLoading(
                     WebView view, WebResourceRequest request) {
-                if (!loadingFinished) {
-                    redirect = true;
+                if (!isFinished) {
+                    isRedirect = true;
                 }
 
-                loadingFinished = false;
+                isFinished = false;
                 return true;
             }
 
@@ -48,20 +48,20 @@ public class NewDetailActivity extends AppCompatActivity {
             public void onPageStarted(
                     WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                loadingFinished = false;
+                isFinished = false;
                 //SHOW LOADING IF IT ISNT ALREADY VISIBLE
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                if(!redirect){
-                    loadingFinished = true;
+                if(!isRedirect){
+                    isFinished = true;
                 }
 
-                if(loadingFinished && !redirect){
+                if(isFinished && !isRedirect){
                     mProgressBar.setVisibility(View.GONE);
                 } else{
-                    redirect = false;
+                    isRedirect = false;
                 }
             }
         });

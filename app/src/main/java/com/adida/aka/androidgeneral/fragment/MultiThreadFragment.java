@@ -1,10 +1,9 @@
 package com.adida.aka.androidgeneral.fragment;
 
 
+import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -20,6 +19,7 @@ import android.widget.Toast;
 
 import com.adida.aka.androidgeneral.R;
 import com.adida.aka.androidgeneral.activity.NewDetailActivity;
+import com.adida.aka.androidgeneral.widget.Utilities;
 import com.adida.aka.androidgeneral.widget.XMLDOMParser;
 
 import org.w3c.dom.Document;
@@ -35,15 +35,16 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MultiThreadFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class MultiThreadFragment extends Fragment
+        implements SwipeRefreshLayout.OnRefreshListener{
 
-    private ArrayList<String> arrayTitle;
-    private ArrayList<String> arrayLink;
-    private ArrayAdapter<String> arrayAdapter;
-    private ListView lvTitle;
+    private ArrayList<String> mListTitle;
+    private ArrayList<String> mLisrLink;
+    private ArrayAdapter<String> mArrayAdapter;
+    private ListView mLvTitle;
     private View mView;
     private ProgressBar mProgressBar;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public MultiThreadFragment() {
         // Required empty public constructor
@@ -55,24 +56,25 @@ public class MultiThreadFragment extends Fragment implements SwipeRefreshLayout.
                              Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_multi_thread, container, false);
         initView();
-        getData();
-        arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, arrayTitle);
-        lvTitle.setAdapter(arrayAdapter);
+        loadData(getActivity());
+        mArrayAdapter = new ArrayAdapter<String>(getActivity(),
+                        android.R.layout.simple_list_item_1, mListTitle);
+        mLvTitle.setAdapter(mArrayAdapter);
 
-        lvTitle.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mLvTitle.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), NewDetailActivity.class);
-                intent.putExtra("link",arrayLink.get(position));
+                intent.putExtra("link", mLisrLink.get(position));
                 startActivity(intent);
             }
         });
-        swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.post(new Runnable() {
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        swipeRefreshLayout.setRefreshing(false);
-                                        arrayAdapter.notifyDataSetChanged();
+                                        mSwipeRefreshLayout.setRefreshing(false);
+                                        mArrayAdapter.notifyDataSetChanged();
                                     }
                                 }
         );
@@ -80,14 +82,19 @@ public class MultiThreadFragment extends Fragment implements SwipeRefreshLayout.
         return mView;
     }
 
-    private void getData() {
+    /**
+     * Load data from internet
+     * @param context
+     */
+    private void loadData(Activity context) {
 
-        if (!isNetworkConnected()){
-            Toast.makeText(getActivity(), "Network unavailable, please check and try again", Toast.LENGTH_SHORT).show();
+        if (!Utilities.checkNetwok(context)){
+            Toast.makeText(context, "Network unavailable, please check and try again",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
-        getActivity().runOnUiThread(new Runnable() {
+       context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 new GetXML().execute("http://tuoitre.vn/rss/tt-tin-moi-nhat.rss");
@@ -95,27 +102,21 @@ public class MultiThreadFragment extends Fragment implements SwipeRefreshLayout.
             }
         });
     }
-
-    private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        return cm.getActiveNetworkInfo() != null;
-    }
     private void initView() {
-        arrayTitle = new ArrayList<String>();
-        arrayLink  = new ArrayList<String>();
-        lvTitle = (ListView) mView.findViewById(R.id.lvTitile);
-        mProgressBar = (ProgressBar) mView.findViewById(R.id.prb_load);
-        swipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.swipe_refresh_layout);
+        mListTitle          = new ArrayList<>();
+        mLisrLink           = new ArrayList<>();
+        mLvTitle            = mView.findViewById(R.id.lvTitile);
+        mProgressBar        = mView.findViewById(R.id.prb_load);
+        mSwipeRefreshLayout = mView.findViewById(R.id.swipe_refresh_layout);
     }
 
     @Override
     public void onRefresh() {
         mProgressBar.setVisibility(View.VISIBLE);
-        arrayTitle.clear();
-        arrayAdapter.notifyDataSetChanged();
-        getData();
-        swipeRefreshLayout.setRefreshing(false);
+        mListTitle.clear();
+        mArrayAdapter.notifyDataSetChanged();
+        loadData(getActivity());
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     private class  GetXML extends AsyncTask<String, String, String> {
@@ -146,11 +147,11 @@ public class MultiThreadFragment extends Fragment implements SwipeRefreshLayout.
             for (int i =0; i < nodeList.getLength(); i++){
                 Element element = (Element) nodeList.item(i);
                 title = parser.getValue(element, "title");
-                arrayTitle.add(title);
-                arrayLink.add(parser.getValue(element, "link"));
+                mListTitle.add(title);
+                mLisrLink.add(parser.getValue(element, "link"));
                 Log.d("title", parser.getValue(element, "title") );
             }
-            arrayAdapter.notifyDataSetChanged();
+            mArrayAdapter.notifyDataSetChanged();
             mProgressBar.setVisibility(View.GONE);
 
         }
@@ -169,7 +170,8 @@ public class MultiThreadFragment extends Fragment implements SwipeRefreshLayout.
             URLConnection urlConnection = url.openConnection();
 
             // wrap the urlconnection in a bufferedreader
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(urlConnection.getInputStream()));
 
             String line;
 

@@ -12,24 +12,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.adida.aka.androidgeneral.R;
+import com.adida.aka.androidgeneral.receiver.LocationReceiver;
 import com.adida.aka.androidgeneral.receiver.NameReceiver;
-import com.adida.aka.androidgeneral.receiver.NetworkChangeBroadcast;
+import com.adida.aka.androidgeneral.receiver.NetworkChangeReceiver;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class BroadcastReceiverFragment extends android.app.Fragment implements View.OnClickListener{
 
-    private Button mBtnData, mBtnNetwork, mBtnLocation;
-    private NameReceiver mNameReceiver;
-    private NetworkChangeBroadcast mNetworkChangeBroadcast;
-    private TextView mTxtName;
+    private static final String ACTION_NETWORK  = "android.net.conn.CONNECTIVITY_CHANGE";
+    private static final String ACTION_LOCATION = "android.location.PROVIDERS_CHANGED";
 
     private boolean isData, isNetwork, isLocation;
+    private Button mBtnData, mBtnNetwork, mBtnLocation;
+    private TextView mTxtName;
 
-    public BroadcastReceiverFragment() {
-        // Required empty public constructor
-    }
+    private NameReceiver mNameReceiver;
+    private NetworkChangeReceiver mNetworkChangeReceiver;
+    private LocationReceiver mLocationReceiver;
 
 
     @Override
@@ -63,33 +64,47 @@ public class BroadcastReceiverFragment extends android.app.Fragment implements V
         }
     }
 
+    /**
+     * Listener change network
+     */
     private void listenerNetwork() {
         if (!isNetwork){
             isNetwork = true;
             mBtnNetwork.setText("Stop Listener Network");
-            mNetworkChangeBroadcast = new NetworkChangeBroadcast(getActivity());
+            mNetworkChangeReceiver = new NetworkChangeReceiver(getActivity());
             IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-            getActivity().registerReceiver(mNetworkChangeBroadcast, intentFilter);
+            intentFilter.addAction(ACTION_NETWORK);
+            getActivity().registerReceiver(mNetworkChangeReceiver, intentFilter);
 
         }else {
             isNetwork = false;
             mBtnNetwork.setText("Listener Network");
-            getActivity().unregisterReceiver(mNetworkChangeBroadcast);
+            getActivity().unregisterReceiver(mNetworkChangeReceiver);
 
         }
     }
 
+    /**
+     * Lister change location
+     */
     private void listenerLocation() {
         if(!isLocation){
             isLocation = true;
-            mBtnLocation.setText("Listener Location");
+            mBtnLocation.setText("Stop Listener Location");
+            mLocationReceiver = new LocationReceiver();   
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(ACTION_LOCATION);
+            getActivity().registerReceiver(mLocationReceiver, intentFilter);
         }else {
             isLocation = false;
-            mBtnLocation.setText("Stop Listener Location");
+            mBtnLocation.setText("Listener Location");
+            getActivity().unregisterReceiver(mLocationReceiver);
         }
     }
 
+    /**
+     *  Listener reciver data from send broadcast
+     */
     private void listenerData() {
         if (!isData){
             isData = true;

@@ -11,10 +11,10 @@ import android.widget.Toast;
  * Created by tmha on 8/9/2017.
  */
 
-public class NetworkChangeBroadcast extends BroadcastReceiver {
+public class NetworkChangeReceiver extends BroadcastReceiver {
     Activity mContext;
 
-    public NetworkChangeBroadcast(Activity mContext) {
+    public NetworkChangeReceiver(Activity mContext) {
         this.mContext = mContext;
     }
 

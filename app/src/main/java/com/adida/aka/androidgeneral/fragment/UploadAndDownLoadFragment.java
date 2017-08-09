@@ -38,16 +38,11 @@ import static com.adida.aka.androidgeneral.widget.Constans.REQUEST_CODE_FOLDER;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UploadAndDownLoadFragment extends android.app.Fragment implements View.OnClickListener {
+public class UploadAndDownLoadFragment extends android.app.Fragment {
 
     private Button mBtnUpload;
     private ImageView mImageView;
     String path;
-
-    public UploadAndDownLoadFragment() {
-        // Required empty public constructor
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,20 +73,6 @@ public class UploadAndDownLoadFragment extends android.app.Fragment implements V
         });
     }
 
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.btn_upload:
-                upload();
-                break;
-        }
-    }
-
-    private void upload() {
-
-    }
-
     class POST_FILE extends AsyncTask<String, Void, String> {
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -101,26 +82,28 @@ public class UploadAndDownLoadFragment extends android.app.Fragment implements V
         @Override
         protected String doInBackground(String... params) {
 
-            File file = new File(path);
-            String content_type = getType(file.getPath());
-            String file_path = file.getAbsolutePath();
+            if (path != null) {
+                File file = new File(path);
+                String content_type = getType(file.getPath());
+                String file_path = file.getAbsolutePath();
 
-            RequestBody file_body = RequestBody.create(MediaType.parse(content_type), file);
-            RequestBody requestBody = new MultipartBody.Builder()
-                    .addFormDataPart("upload_file",
-                            file_path.substring(file_path.lastIndexOf("/") + 1), file_body)
-                    .setType(MultipartBody.FORM)
-                    .build();
-            Request request = new Request.Builder()
-                    .url(params[0])
-                    .post(requestBody)
-                    .build();
+                RequestBody file_body = RequestBody.create(MediaType.parse(content_type), file);
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .addFormDataPart("upload_file",
+                                file_path.substring(file_path.lastIndexOf("/") + 1), file_body)
+                        .setType(MultipartBody.FORM)
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
 
-            try {
-                Response response = okHttpClient.newCall(request).execute();
-                return response.body().string();
-            } catch (IOException e) {
-                e.printStackTrace();
+                try {
+                    Response response = okHttpClient.newCall(request).execute();
+                    return response.body().string();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
             return null;
@@ -131,14 +114,15 @@ public class UploadAndDownLoadFragment extends android.app.Fragment implements V
 
         @Override
         protected void onPostExecute(String s) {
-            Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
             super.onPostExecute(s);
+            if (s != null) {
+                Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     public void setImage(Uri uri){
         path = getRealPathFromURI(uri);
-        //mo va doc duong dan
         try {
             InputStream inputStream = getActivity().getContentResolver().openInputStream(uri);
             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
@@ -151,7 +135,7 @@ public class UploadAndDownLoadFragment extends android.app.Fragment implements V
     private String getRealPathFromURI(Uri contentURI) {
         String result;
         Cursor cursor = getActivity().getContentResolver().query(contentURI, null, null, null, null);
-        if (cursor == null) { // Source is Dropbox or other similar local file path
+        if (cursor == null) {
             result = contentURI.getPath();
         } else {
             cursor.moveToFirst();

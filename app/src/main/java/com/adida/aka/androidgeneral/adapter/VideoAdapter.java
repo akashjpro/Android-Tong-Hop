@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.adida.aka.androidgeneral.activity.PlayVideoActivity;
 import com.adida.aka.androidgeneral.R;
 import com.adida.aka.androidgeneral.model.Video;
+import com.adida.aka.androidgeneral.widget.Constans;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -39,18 +40,18 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     public void onBindViewHolder(VideoViewHolder holder, int position) {
         Video video = mListVideo.get(position);
         Picasso.with(mContext)
-                .load(video.getHinh())
+                .load(video.getmImage())
                 .placeholder(R.drawable.ic_videocam_black_24dp)
                 .fit()
                 .into(holder.img);
-        holder.title.setText(video.getTitle());
-        holder.channel.setText(video.getChannelTitle());
+        holder.title.setText(video.getmTitle());
+        holder.channel.setText(video.getmChannelTitle());
 
         holder.setOnClickLitener(new ListenerItem() {
             @Override
             public void onClick(int position) {
                 Intent intent = new Intent(mContext, PlayVideoActivity.class);
-                intent.putExtra("IDVIDEO", mListVideo.get(position).getVideoID());
+                intent.putExtra(Constans.EXTRA_ID_VIDEO, mListVideo.get(position).getmIdVideo());
                 mContext.startActivity(intent);
             }
         });

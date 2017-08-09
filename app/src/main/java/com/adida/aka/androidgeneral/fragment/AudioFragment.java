@@ -1,7 +1,6 @@
 package com.adida.aka.androidgeneral.fragment;
 
 
-import android.graphics.drawable.StateListDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,21 +29,16 @@ import static com.adida.aka.androidgeneral.R.id.seekBar;
  */
 public class AudioFragment extends android.app.Fragment {
 
-    private ImageButton ibtnPlay, ibtnPrev, ibtNext, ibtShuffle, ibnRepeat;
-    private ImageView imgDiaTron;
-    private SeekBar skSong;
-    private ArrayList<Integer> arraySong;
-    private TextView txtTimeStart, txtTimeTotal;
-    private MediaPlayer mediaPlayer;
-    private int vitri = 0;
-    private boolean shuffle = false;
-    private boolean repeat  = false;
+    private ImageButton mIbtnPlay, mIbtnPrev, mIbtNext, mIbtShuffle, mIbnRepeat;
+    private ImageView mImgDiaTron;
+    private SeekBar mSkSong;
+    private ArrayList<Integer> mListSong;
+    private TextView mTxtTimeStart, mTxtTimeTotal;
+    private MediaPlayer mMediaPlayer;
+    private int mIndex = 0;
+    private boolean isShuffle = false;
+    private boolean isRepeat = false;
     private View mView;
-
-
-    public AudioFragment() {
-        // Required empty public constructor
-    }
 
 
     @Override
@@ -53,109 +47,95 @@ public class AudioFragment extends android.app.Fragment {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_audio, container, false);
         initView();
-        khoiTaoMang();
-        final StateListDrawable stateListDrawablec = new StateListDrawable();
+        initListData();
         final Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate);
-        mediaPlayer = MediaPlayer.create(getActivity(), arraySong.get(vitri));
-        ibtnPlay.setOnClickListener(new View.OnClickListener() {
+        mMediaPlayer = MediaPlayer.create(getActivity(), mListSong.get(mIndex));
+        mIbtnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mediaPlayer.isPlaying()){
-                    mediaPlayer.pause();
-                    ibtnPlay.setImageResource(R.drawable.play1_1);
-                    imgDiaTron.clearAnimation();
-                    // imgDiaTron.clearAnimation();
-                    //stateListDrawablec.addState(new int[] {android.R.attr.state_pressed}, getResources().getDrawable(R.drawable.play1_1) );
+                if(mMediaPlayer.isPlaying()){
+                    mMediaPlayer.pause();
+                    mIbtnPlay.setImageResource(R.drawable.ic_play_white);
+                    mImgDiaTron.clearAnimation();
                 }
                 else{
-                    imgDiaTron.startAnimation(animation);
-                    mediaPlayer.start();
-                    ibtnPlay.setImageResource(R.drawable.pause1);
-                    // stateListDrawablec.addState(new int[] {android.R.attr.state_pressed}, getResources().getDrawable(R.drawable.pause1) );
-
+                    mImgDiaTron.startAnimation(animation);
+                    mMediaPlayer.start();
+                    mIbtnPlay.setImageResource(R.drawable.ic_pause_white);
                 }
                 timeSong();
                 upDateCurrentTime();
             }
         });
-        ibtNext.setOnClickListener(new View.OnClickListener() {
+        mIbtNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ibtnPlay.setImageResource(R.drawable.pause1);
+                mIbtnPlay.setImageResource(R.drawable.ic_pause_white);
                 xuLyNext();
             }
         });
 
-        ibtnPrev.setOnClickListener(new View.OnClickListener() {
+        mIbtnPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ibtnPlay.setImageResource(R.drawable.pause1);
-                vitri--;
-                if (vitri < 0){
-                    vitri = arraySong.size() - 1 ;
+                mIbtnPlay.setImageResource(R.drawable.ic_pause_white);
+                mIndex--;
+                if (mIndex < 0){
+                    mIndex = mListSong.size() - 1 ;
                 }
-                skSong.setProgress(0);
-                mediaPlayer.stop();
-                mediaPlayer = MediaPlayer.create(getActivity(), arraySong.get(vitri));
-                mediaPlayer.start();
+                mSkSong.setProgress(0);
+                mMediaPlayer.stop();
+                mMediaPlayer = MediaPlayer.create(getActivity(), mListSong.get(mIndex));
+                mMediaPlayer.start();
                 timeSong();
             }
         });
 
-        ibtShuffle.setOnClickListener(new View.OnClickListener() {
+        mIbtShuffle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(shuffle){
-                    ibtShuffle.setImageResource(R.drawable.shuffle);
-                    shuffle = false;
-                    ibnRepeat.setEnabled(true);
+                if(isShuffle){
+                    mIbtShuffle.setImageResource(R.drawable.ic_shuffle_black);
+                    isShuffle = false;
+                    mIbnRepeat.setEnabled(true);
                 }
                 else {
                     Toast.makeText(getActivity(), "Phát ngẫu nhiên", Toast.LENGTH_SHORT).show();
-                    ibtShuffle.setImageResource(R.drawable.shuffle1);
-                    shuffle = true;
-                    ibnRepeat.setEnabled(false);
+                    mIbtShuffle.setImageResource(R.drawable.ic_shuffle_white);
+                    isShuffle = true;
+                    mIbnRepeat.setEnabled(false);
                 }
 
             }
         });
 
-        ibnRepeat.setOnClickListener(new View.OnClickListener() {
+        mIbnRepeat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if(repeat){
-                    ibnRepeat.setImageResource(R.drawable.ic_repeat);
-                    repeat = false;
-                    ibtShuffle.setEnabled(true);
+                if(isRepeat){
+                    mIbnRepeat.setImageResource(R.drawable.ic_repeat_black);
+                    isRepeat = false;
+                    mIbtShuffle.setEnabled(true);
                 }
                 else {
                     Toast.makeText(getActivity(), "Phát lặp lại", Toast.LENGTH_SHORT).show();
-                    ibtShuffle.setEnabled(false);
-                    ibnRepeat.setImageResource(R.drawable.repeat1);
-                    repeat = true;
+                    mIbtShuffle.setEnabled(false);
+                    mIbnRepeat.setImageResource(R.drawable.ic_repeat_white);
+                    isRepeat = true;
                 }
 
             }
         });
 
-//        ibnStop.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mediaPlayer.stop();
-//                ibtnPlay.setImageResource(R.drawable.img_btn_play);
-//                mediaPlayer = MediaPlayer.create(MainActivity.this, arraySong.get(vitri));
-//            }
-//        });
 
-        skSong.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mSkSong.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(!fromUser){
                     return;
                 }
 
-                mediaPlayer.seekTo(seekBar.getProgress());
+                mMediaPlayer.seekTo(seekBar.getProgress());
             }
 
             @Override
@@ -165,76 +145,82 @@ public class AudioFragment extends android.app.Fragment {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                if(seekBar.getProgress() >= mediaPlayer.getDuration()){
-                    if(repeat){
+                if(seekBar.getProgress() >= mMediaPlayer.getDuration()){
+                    if(isRepeat){
                         playMusic();
                     }
-                    else if (shuffle){
+                    else if (isShuffle){
                         Random randomBaiHat = new Random();
-                        vitri = randomBaiHat.nextInt(arraySong.size());
+                        mIndex = randomBaiHat.nextInt(mListSong.size());
                         playMusic();
                     }
                     else {
                         xuLyNext();
                     }
                 }
-                mediaPlayer.seekTo(seekBar.getProgress());// seekTo la nhay toi dau
+                mMediaPlayer.seekTo(seekBar.getProgress());// seek to time progress of song
             }
         });
         return mView;
     }
 
+    /**
+     * initialize controls view
+     */
     private void initView() {
-        ibtnPlay    =  mView.findViewById(R.id.imageButtonPlay);
-        ibtNext     =  mView.findViewById(R.id.imageButtonNext);
-        ibtnPrev    =  mView.findViewById(R.id.imageButtonpPevious);
-        ibtShuffle  =  mView.findViewById(R.id.imageButtonShuffle);
-        ibnRepeat   =  mView.findViewById(R.id.imageButtonRepeat);
+        mIbtnPlay =  mView.findViewById(R.id.imageButtonPlay);
+        mIbtNext =  mView.findViewById(R.id.imageButtonNext);
+        mIbtnPrev =  mView.findViewById(R.id.imageButtonpPevious);
+        mIbtShuffle =  mView.findViewById(R.id.imageButtonShuffle);
+        mIbnRepeat =  mView.findViewById(R.id.imageButtonRepeat);
 
-        imgDiaTron   =  mView.findViewById(R.id.imageViewDiaTron);
-        txtTimeTotal = mView.findViewById(R.id.txtThoiGianKetThuc);
-        txtTimeStart = mView.findViewById(R.id.txtThoiGianBatDau);
+        mImgDiaTron =  mView.findViewById(R.id.imageViewDiaTron);
+        mTxtTimeTotal = mView.findViewById(R.id.txtThoiGianKetThuc);
+        mTxtTimeStart = mView.findViewById(R.id.txtThoiGianBatDau);
 
-        skSong = mView.findViewById(seekBar);
+        mSkSong = mView.findViewById(seekBar);
     }
 
+    /**
+     * next song
+     */
     private void xuLyNext() {
-        vitri++;
-        if (vitri >= arraySong.size()){
-            vitri = 0;
+        mIndex++;
+        if (mIndex >= mListSong.size()){
+            mIndex = 0;
         }
         playMusic();
 
     }
 
+    /**
+     * play audio music
+     */
     private void playMusic() {
-        skSong.setProgress(0);
-        mediaPlayer.stop();
-        mediaPlayer = MediaPlayer.create(getActivity(), arraySong.get(vitri));
-        mediaPlayer.start();
+        mSkSong.setProgress(0);
+        mMediaPlayer.stop();
+        mMediaPlayer = MediaPlayer.create(getActivity(), mListSong.get(mIndex));
+        mMediaPlayer.start();
         timeSong();
     }
 
+    /**
+     * update  current time for song
+     */
     private void upDateCurrentTime(){
         final Handler handler = new Handler();
         final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                txtTimeStart.setText(simpleDateFormat.format(mediaPlayer.getCurrentPosition()));
-                skSong.setProgress(mediaPlayer.getCurrentPosition());
-                if ( mediaPlayer.getDuration() - mediaPlayer.getCurrentPosition() <= 500){
-                    if(repeat){
-//                        ibnRepeat.setImageResource(R.drawable.ic_repeat);
-//                        repeat = false;
-//                        ibtShuffle.setEnabled(true);
+                mTxtTimeStart.setText(simpleDateFormat.format(mMediaPlayer.getCurrentPosition()));
+                mSkSong.setProgress(mMediaPlayer.getCurrentPosition());
+                if ( mMediaPlayer.getDuration() - mMediaPlayer.getCurrentPosition() <= 500){
+                    if(isRepeat){
                         playMusic();
-                    }else if(shuffle){
+                    }else if(isShuffle){
                         Random randomBaiHat = new Random();
-                        vitri = randomBaiHat.nextInt(arraySong.size());
-//                        ibtShuffle.setImageResource(R.drawable.shuffle);
-//                        shuffle = false;
-//                        ibnRepeat.setEnabled(true);
+                        mIndex = randomBaiHat.nextInt(mListSong.size());
                         playMusic();
                     }
                     else {
@@ -247,33 +233,41 @@ public class AudioFragment extends android.app.Fragment {
     }
 
 
-
+    /**
+     * set time for song
+     */
     private void  timeSong(){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
-        txtTimeTotal.setText(simpleDateFormat.format(mediaPlayer.getDuration() )+ "");
-        //gan max cho seekbar bang tong thoi gian cua bai hat
-        skSong.setMax(mediaPlayer.getDuration());
+        mTxtTimeTotal.setText(simpleDateFormat.format(mMediaPlayer.getDuration() )+ "");
+        //set max is total duration for seekbar
+        mSkSong.setMax(mMediaPlayer.getDuration());
 
     }
-    private void khoiTaoMang() {
-        arraySong = new ArrayList<Integer>();
-        arraySong.add(R.raw.a);
-        arraySong.add(R.raw.b);
-        arraySong.add(R.raw.c);
-        arraySong.add(R.raw.d);
+
+    /**
+     * initialize data for list song
+     */
+    private void initListData() {
+        mListSong = new ArrayList<Integer>();
+        mListSong.add(R.raw.a);
+        mListSong.add(R.raw.b);
+        mListSong.add(R.raw.c);
+        mListSong.add(R.raw.d);
+        mListSong.add(R.raw.e);
+        mListSong.add(R.raw.f);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (mediaPlayer!=null)
-             mediaPlayer.stop();
+        if (mMediaPlayer !=null)
+             mMediaPlayer.stop();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mediaPlayer!=null)
-            mediaPlayer.stop();
+        if (mMediaPlayer !=null)
+            mMediaPlayer.stop();
     }
 }

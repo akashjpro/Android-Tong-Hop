@@ -9,10 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.adida.aka.androidgeneral.activity.FrameActivity;
-import com.adida.aka.androidgeneral.activity.Gird;
+import com.adida.aka.androidgeneral.activity.GirdActivity;
 import com.adida.aka.androidgeneral.activity.LinearActivity;
-import com.adida.aka.androidgeneral.activity.Relative;
-import com.adida.aka.androidgeneral.activity.Table;
+import com.adida.aka.androidgeneral.activity.RelativeActivity;
+import com.adida.aka.androidgeneral.activity.TableActivity;
 import com.adida.aka.androidgeneral.R;
 
 /**
@@ -43,13 +43,13 @@ public class LayoutFragment extends Fragment implements View.OnClickListener{
                 getActivity().startActivity(new Intent(getActivity(), FrameActivity.class));
                 break;
             case R.id.btn_Relative_layout:
-                getActivity().startActivity(new Intent(getActivity(), Relative.class));
+                getActivity().startActivity(new Intent(getActivity(), RelativeActivity.class));
                 break;
             case R.id.btn_gird_layout:
-                getActivity().startActivity(new Intent(getActivity(), Gird.class));
+                getActivity().startActivity(new Intent(getActivity(), GirdActivity.class));
                 break;
             case R.id.btn_table_layout:
-                getActivity().startActivity(new Intent(getActivity(), Table.class));
+                getActivity().startActivity(new Intent(getActivity(), TableActivity.class));
                 break;
 
         }

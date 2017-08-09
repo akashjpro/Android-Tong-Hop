@@ -7,8 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="10"
-    android:background="#2c71bf"
-    tools:context="com.example.akashjpro.playmusic.MainActivity">
+    android:background="#2c71bf">
 
     <RelativeLayout
         android:gravity="center"
@@ -20,7 +19,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/hinh_nen1"
+            android:src="@drawable/background_music"
             android:id="@+id/imageViewDiaTron" />
     </RelativeLayout>
 
@@ -121,7 +120,7 @@
             android:layout_centerInParent="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/play1_1"
+            android:src="@drawable/ic_play_white"
             android:id="@+id/imageButtonPlay"
             />
 

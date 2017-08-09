@@ -8,19 +8,7 @@
         android:pivotX="50%"
         android:pivotY="50%"
         android:repeatCount="infinite"
-        android:interpolator="@anim/linear_interpolator"
-
-
+        android:interpolator="@android:anim/cycle_interpolator"
         />
-
-    <!--<rotate-->
-    <!--android:fromDegrees="180"-->
-    <!--android:toDegrees="360"-->
-    <!--android:duration="2000"-->
-    <!--android:pivotX="50%"-->
-    <!--android:pivotY="50%"-->
-    <!--android:repeatCount="infinite"-->
-    <!--/>-->
-
 
 </set>

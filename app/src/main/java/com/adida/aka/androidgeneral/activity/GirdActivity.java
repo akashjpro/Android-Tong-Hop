@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.adida.aka.androidgeneral.R;
 
-public class Gird extends AppCompatActivity {
+public class GirdActivity extends AppCompatActivity {
     GridView gridView;
 
     static final String[] numbers = new String[] {
@@ -56,6 +56,6 @@ public class Gird extends AppCompatActivity {
     }
 
     public void onClick(View view) {
-        startActivity(new Intent(this, GirdMore.class));
+        startActivity(new Intent(this, GirdMoreActivity.class));
     }
 }
