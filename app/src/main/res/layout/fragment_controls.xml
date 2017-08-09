@@ -1,0 +1,119 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:context="com.adida.aka.androidgeneral.fragment.ControlsFragment">
+
+  <ScrollView
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+      <LinearLayout
+          android:orientation="vertical"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+
+
+          <SearchView
+              android:layout_width="match_parent"
+              android:layout_height="match_parent" />
+
+          <WebView
+              android:layout_width="match_parent"
+              android:layout_height="match_parent" />
+
+          <EditText
+              android:id="@+id/editText2"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:ems="10"
+              android:inputType="date" />
+
+          <Space
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content" />
+
+          <Switch
+              android:id="@+id/switch1"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="Switch" />
+
+          <RatingBar
+              android:id="@+id/ratingBar"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content" />
+
+          <QuickContactBadge
+              android:id="@+id/quickContactBadge"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              app:srcCompat="@mipmap/ic_launcher" />
+
+          <SeekBar
+              android:id="@+id/seekBar"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content" />
+
+          <ProgressBar
+              android:id="@+id/progressBar"
+              style="?android:attr/progressBarStyle"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content" />
+
+          <Spinner
+              android:id="@+id/spinner"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content" />
+
+          <CheckedTextView
+              android:id="@+id/checkedTextView"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="CheckedTextView" />
+
+          <RadioButton
+              android:id="@+id/radioButton"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="RadioButton" />
+
+          <CheckBox
+              android:id="@+id/checkBox"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="CheckBox" />
+
+          <TextView
+              android:id="@+id/textView2"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="TextView" />
+
+          <EditText
+              android:id="@+id/editText"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:ems="10"
+              android:inputType="textPersonName"
+              android:text="Name" />
+
+          <Button
+              android:id="@+id/button"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="Button" />
+
+          <ToggleButton
+              android:id="@+id/toggleButton"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="ToggleButton" />
+
+
+      </LinearLayout>
+
+  </ScrollView>
+
+</LinearLayout>

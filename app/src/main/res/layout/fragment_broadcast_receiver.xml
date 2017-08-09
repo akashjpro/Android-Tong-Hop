@@ -1,0 +1,44 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:orientation="vertical"
+    tools:context="com.adida.aka.androidgeneral.fragment.BroadcastReceiverFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+
+    <Button
+        android:textAllCaps="false"
+        android:id="@+id/btn_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Listener Data" />
+
+    <TextView
+        android:textColor="#110de6"
+        android:id="@+id/txt_name"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_marginTop="10dp"
+        android:textAllCaps="false"
+        android:id="@+id/btn_network"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Listener Network" />
+
+    <Button
+        android:visibility="gone"
+        android:layout_marginTop="15dp"
+        android:textAllCaps="false"
+        android:id="@+id/btn_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Listener Location" />
+
+
+</LinearLayout>
